@@ -1,0 +1,14 @@
+body {
+   font-size: 24px;
+   background-color: skyblue;
+}
+
+.text {
+   text-align: center;
+   color: whitesmoke;
+}
+
+#clock {
+   font-weight: bold;
+   font-size: 100px;
+}
