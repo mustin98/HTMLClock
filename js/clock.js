@@ -1,8 +1,5 @@
 var time12 = true;
-var steps = 0;
-var r = 0;
-var g = 0;
-var b = 0;
+var forecastKey = "2adeea29b1b55d8c635071be3f293285";
 
 function setTime12() {
    d = new Date();
@@ -45,35 +42,6 @@ function getTime() {
    setTimeout(getTime, 50);
 }
 
-function setColor() {
-   r += 15;
-   if (r > 255) {
-      g += 15;
-      r = 0;
-   }
-   if (g > 255) {
-      b += 15;
-      g = 0;
-   }
-   if (b > 255) {
-      b = 0;
-   }
-   red = r.toString(16);
-   grn = g.toString(16);
-   blu = b.toString(16);
-   if (red.length == 1) {
-      red = "0" + red;
-   } 
-   if (grn.length == 1) {
-      grn = "0" + grn;
-   }
-   if (blu.length == 1) {
-      blu = "0" + blu;
-   }
-   color = "#" + red + grn + blu;
-   document.body.style.background = color;
-}
-
 function swapTimeModes() {
    time12 = !time12;
    document.getElementById("button").innerHTML = (time12 ? "Switch to 24-hour mode" : "Switch to 12-hour mode")
@@ -82,5 +50,30 @@ function swapTimeModes() {
 function onLoad() {
    getTime();
    document.getElementById("button").setAttribute("onclick", "swapTimeModes()");
+   getTemp();
 }
 
+function getTemp() {
+   $.getJSON("https://api.forecast.io/forecast/" + forecastKey + "/35.300399,-120.662362?callback=?", 
+      function(data) {
+         $("#forecastLabel").html(data.daily.summary);
+         $("#forecastIcon").attr("src", "img/" + data.daily.icon + ".png");
+         temp = data.daily.temperatureMax;
+         var tempClass
+         if (temp < 60) {
+            tempClass = "cold";
+         } else if (temp >= 60 && temp < 70) {
+            tempClass = "chilly";
+         } else if (temp >= 70 && temp < 80) {
+            tempClass = "nice";
+         } else if (temp>= 80  && temp < 90) {
+            tempClass = "warm";
+         } else {
+            tempClass = "hot";
+         }
+
+         $("body").attr("class", tempClass)
+      });
+}
+
+$(document).ready(onLoad);
