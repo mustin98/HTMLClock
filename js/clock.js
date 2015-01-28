@@ -1,7 +1,9 @@
 var time12 = true;
 var forecastKey = "2adeea29b1b55d8c635071be3f293285";
-var latitude;
-var longitude;
+var googleKey = "AIzaSyBsPZ9QAMkfHVEcqq1bNUGLz317KQcIrAA";
+var latitude = "35.300399";
+var longitude = "-120.662362";
+var errorCoords = " Using Cal Poly Building 14 coordinates."
 
 
 function setTime12() {
@@ -31,7 +33,7 @@ function setTime24() {
    mins = d.getMinutes();
    secs = d.getSeconds();
 
-   document.getElementById("clock").innerHTML = hours + ":" +
+   document.getElementById("clock").innerHTML = (hours < 10 ? "0" + hours : hours) + ":" +
                                                (mins < 10 ? "0" + mins : mins) + ":" +
                                                (secs < 10 ? "0" + secs : secs);
 }
@@ -53,44 +55,57 @@ function swapTimeModes() {
 function onLoad() {
    getTime();
    document.getElementById("button").setAttribute("onclick", "swapTimeModes()");
-   $("#forecastLabel").prepend("<p></p>");
-   getTemp();
+   $("#forecastLabel").prepend("<p id=\"location\"></p><p id=\"summary\"></p>");
    getLocation();
+   getTemp();
 }
 
 function getLocation() {
    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition, showLocationError);
+      navigator.geolocation.getCurrentPosition(setCoords, showLocationError);
    } else {
-      $("#errorText").html("Geolocation is not supported by this browser");
+      $("#errorText").html("Geolocation is not supported by this browser." + errorCoords);
    }
 }
 
-function showPosition(position) {
-   $("#errorText").html("lat=" + position.coords.latitude + "<br>long=" + position.coords.longitude);
+function setCoords(position) {
+   latitude = position.coords.latitude;
+   longitude = position.coords.longitude;
 }
 
 function showLocationError(error) {
-    switch(error.code) {
-        case error.PERMISSION_DENIED:
-            $("#errorText").html("User denied the request for Geolocation.");
-            break;
-        case error.POSITION_UNAVAILABLE:
-            $("#errorText").html("Location information is unavailable.");
-            break;
-        case error.TIMEOUT:
-            $("#errorText").html("The request to get user location timed out.");
-            break;
-        case error.UNKNOWN_ERROR:
-            $("#errorText").html("An unknown error occurred.");
-            break;
-    }
+   switch(error.code) {
+      case error.PERMISSION_DENIED:
+         $("#errorText").html("User denied the request for Geolocation." + errorCoords);
+         break;
+      case error.POSITION_UNAVAILABLE:
+         $("#errorText").html("Location information is unavailable." + errorCoords);
+         break;
+      case error.TIMEOUT:
+         $("#errorText").html("The request to get user location timed out." + errorCoords);
+         break;
+      case error.UNKNOWN_ERROR:
+         $("#errorText").html("An unknown error occurred." + errorCoords);
+         break;
+   }
+}
+
+function getCity() {
+   var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+latitude+","+longitude+
+      "&result_type=political"+
+      "&key="+googleKey;
+   $.getJSON(url,
+      function(data) {
+         $("#forecastLabel #location").html(data.results[0].formatted_address);
+      })
 }
 
 function getTemp() {
-   $.getJSON("https://api.forecast.io/forecast/" + forecastKey + "/35.300399,-120.662362?callback=?", 
+   var url = "https://api.forecast.io/forecast/"+forecastKey+"/"+latitude+","+longitude+"?callback=?"
+   getCity();
+   $.getJSON(url,
       function(data) {
-         $("#forecastLabel p").html(data.daily.summary);
+         $("#forecastLabel #summary").html(data.daily.summary);
          $("#forecastIcon").attr("src", "img/" + data.daily.icon + ".png");
 
          var temp;
