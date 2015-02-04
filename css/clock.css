@@ -8,6 +8,12 @@ body {
    color: whitesmoke;
 }
 
+.errorText {
+   text-align: center;
+   color: red;
+   font-size: 12px;
+}
+
 .cold {
    background-color: #95A5A6;
 }

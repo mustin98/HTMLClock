@@ -49,15 +49,7 @@ function getTime() {
 
 function swapTimeModes() {
    time12 = !time12;
-   document.getElementById("button").innerHTML = (time12 ? "Switch to 24-hour mode" : "Switch to 12-hour mode")
-}
-
-function onLoad() {
-   getTime();
-   document.getElementById("button").setAttribute("onclick", "swapTimeModes()");
-   $("#forecastLabel").prepend("<p id=\"location\"></p><p id=\"summary\"></p>");
-   getLocation();
-   getTemp();
+   document.getElementById("modeButton").innerHTML = (time12 ? "Switch to 24-hour mode" : "Switch to 12-hour mode")
 }
 
 function getLocation() {
@@ -132,6 +124,72 @@ function getTemp() {
          }
       });
    setTimeout(getTemp, 30000);
+}
+
+function showAlarmPopup() {
+   $("#mask").removeClass("hide");
+   $("#popup").removeClass("hide");
+}
+
+function hideAlarmPopup() {
+   $("#mask").addClass("hide");
+   $("#popup").addClass("hide");
+}
+
+function insertAlarm(time, alarmName) {
+   $("<div>").addClass("flexable").append(
+      $("<div>").addClass("name").html(alarmName),
+      $("<div>").addClass("time").html(time),
+      $('<input type="button" value="Delete" class="deleteAlarm">')
+   ).appendTo("#alarms");
+
+   $('.deleteAlarm').on('click', function() {
+      $(this).parent().remove();
+   });
+}
+
+function addAlarm() {
+   var time = $("#hours").val() + ":" + $("#mins").val() + " " + $("#ampm").val();
+   var alarmName = $("#alarmName").val();
+
+   var AlarmObject = Parse.Object.extend("Alarm");
+   var alarmObject = new AlarmObject();
+      alarmObject.save({"time": time,"alarmName": alarmName}, {
+      success: function(object) {
+         insertAlarm(time, alarmName);
+         hideAlarmPopup();
+      }
+   });
+}
+
+function populateAlarmOptions() {
+   for (var i = 1; i <= 12; i++) {
+      $("<option>").html(i < 10 ? "0" + i : i).appendTo("#hours");
+   }
+   for (i = 0; i < 60; i++) {
+      $("<option>").html(i < 10 ? "0" + i : i).appendTo("#mins");
+   }
+}
+
+function getAllAlarms() {
+   Parse.initialize("6gLkg0OgYP6tap2GlzSkifeVSwHYuGj9EJq5x4vz", "S1qeKZBe7jGACBf9fnhbWggIK2ZzcN1Rm0GZgZgK");
+   var AlarmObject = Parse.Object.extend("Alarm");
+   var query = new Parse.Query(AlarmObject);
+   query.find({
+      success: function(results) {
+         for (var i = 0; i < results.length; i++) { 
+            insertAlarm(results[i].attributes.time, results[i].attributes.alarmName);
+         }
+      }
+   });
+}
+
+function onLoad() {
+   getTime();
+   getLocation();
+   getTemp();
+   populateAlarmOptions();
+   getAllAlarms();
 }
 
 $(document).ready(onLoad);

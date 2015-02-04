@@ -3,18 +3,50 @@
    <head>
       <meta charset="UTF-8">
       <link rel="stylesheet" type="text/css" href="css/clock.css">
+      <link rel="stylesheet" type="text/css" href="css/alarm.css">
    </head>
    <body id="body">
       <div class="text">Justin's Clock</div>
       <div id="clock" class="text"></div>
       <div class="text">
-         <button id="button" color="black">Switch to 24-Hour Mode</button>
+         <button id="modeButton" color="black" onclick="swapTimeModes()">Switch to 24-Hour Mode</button>
       </div>
       <div id="forecastLabel" class="text">
+         <p id="location"></p>
+         <p id="summary"></p>
          <img id="forecastIcon" class="text"/>
       </div>
-      <div id="errorText" class="text"></div>
+
+      <div id="alarmContainer">
+         <div id="alarmHeader" class="flexable">
+            <h2>Alarms</h2>
+            <input type="button" value="Add Alarm" class="button" onclick="showAlarmPopup()" />
+         </div>
+         <div id="alarms"></div>
+      </div>
+
+      <div id="mask" class="hide"></div>
+
+      <div id="popup" class="hide">
+         <h1>Add Alarm</h1>
+         <div id="timeContainer">
+            <select id="hours"></select>
+            <select id="mins"></select>
+            <select id="ampm">
+               <option>am</option>
+               <option>pm</option>
+            </select>
+         </div>
+         <input type="text" id="alarmName" placeholder="Alarm Name" />
+         <div class="flexable">
+            <input type="button" value="Cancel" class="button" onclick="hideAlarmPopup()" />
+            <input type="button" value="Save Alarm" class="button" onclick="addAlarm()" />
+         </div>
+      </div>
+      
+      <div id="errorText" class="errorText"></div>
    </body>
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+   <script src="https://www.parsecdn.com/js/parse-1.3.4.min.js"></script>
    <script src="js/clock.js"></script>
 </html>
