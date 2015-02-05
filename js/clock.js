@@ -52,11 +52,18 @@ function swapTimeModes() {
    document.getElementById('modeButton').innerHTML = (time12 ? "Switch to 24-hour mode" : "Switch to 12-hour mode")
 }
 
+function errorText(message) {
+   $('#errorText').html(message);
+   setTimeout(function() {
+      $('#errorText').fadeOut(1000);
+   }, 4000);
+}
+
 function getLocation() {
    if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(setCoords, showLocationError);
    } else {
-      $('#errorText').html("Geolocation is not supported by this browser." + errorCoords);
+      errorText("Geolocation is not supported by this browser." + errorCoords);
    }
 }
 
@@ -68,16 +75,16 @@ function setCoords(position) {
 function showLocationError(error) {
    switch(error.code) {
       case error.PERMISSION_DENIED:
-         $('#errorText').html("User denied the request for Geolocation." + errorCoords);
+         errorText("User denied the request for Geolocation." + errorCoords);
          break;
       case error.POSITION_UNAVAILABLE:
-         $('#errorText').html("Location information is unavailable." + errorCoords);
+         errorText("Location information is unavailable." + errorCoords);
          break;
       case error.TIMEOUT:
-         $('#errorText').html("The request to get user location timed out." + errorCoords);
+         errorText("The request to get user location timed out." + errorCoords);
          break;
       case error.UNKNOWN_ERROR:
-         $('#errorText').html("An unknown error occurred." + errorCoords);
+         errorText("An unknown error occurred." + errorCoords);
          break;
    }
 }
@@ -136,16 +143,38 @@ function hideAlarmPopup() {
    $('#popup').addClass("hide");
 }
 
-function insertAlarm(time, alarmName) {
-   $('<div>').addClass("flexable").append(
-      $('<div>').addClass("name").html(alarmName),
-      $('<div>').addClass("time").html(time),
-      $('<input type="button" value="Delete" class="deleteAlarm">')
-   ).appendTo('#alarms');
+function insertAlarm(id, time, alarmName) {
+   $('#alarms').append(
+      $('<div>').attr("id", id).addClass("flexable").append(
+         $('<div>').addClass("name").html(alarmName),
+         $('<div>').addClass("time").html(time)
+      ),
+      $('<input type="button" value="Delete" class="deleteAlarm">').on('click', function() {
+         var b = $(this);
+         var id = b.prev().attr("id");
+         var Alarm = Parse.Object.extend("Alarm");
+         var query = new Parse.Query(Alarm);
+         query.get(id, {
+            success: function(alarm) {
+               alarm.destroy({
+                  success: function() {
+                     errorText('Deleted alarm "' + $("#"+id + " .name").html() + '"');
+                     b.prev().remove();
+                     b.remove();
+                  },
+                  error: function() {
+                     errorText("The alarm... it was too powerful... could. not. delete.");
+                  }
+               });
+            },
+            error: function(alarm, error) {
+               errorText("Unable to retrieve the alarm for deletion");
+            }
+         });
+      })
+   );
 
-   $('.deleteAlarm').on('click', function() {
-      $(this).parent().remove();
-   });
+   
 }
 
 function addAlarm() {
@@ -156,7 +185,7 @@ function addAlarm() {
    var alarmObject = new AlarmObject();
       alarmObject.save({"time": time,"alarmName": alarmName}, {
       success: function(object) {
-         insertAlarm(time, alarmName);
+         insertAlarm(alarmObject.id, time, alarmName);
          hideAlarmPopup();
       }
    });
@@ -178,7 +207,7 @@ function getAllAlarms() {
    query.find({
       success: function(results) {
          for (var i = 0; i < results.length; i++) { 
-            insertAlarm(results[i].attributes.time, results[i].attributes.alarmName);
+            insertAlarm(results[i].id, results[i].attributes.time, results[i].attributes.alarmName);
          }
       }
    });
