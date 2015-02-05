@@ -54,7 +54,6 @@ function swapTimeModes() {
 
 function errorText(message) {
    $('#errorText').html(message);
-   console.log("called again");
    setTimeout(function() {
       $('#errorText').fadeOut(1000);
       setTimeout(function() {
