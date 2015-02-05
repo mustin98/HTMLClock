@@ -21,7 +21,7 @@ function setTime12() {
       hours = 12;
    }
 
-   document.getElementById("clock").innerHTML = hours + ":" + 
+   document.getElementById('clock').innerHTML = hours + ":" + 
                                                 (mins < 10 ? "0" + mins : mins) + ":" +
                                                 (secs < 10 ? "0" + secs : secs) + " " + 
                                                 suffix;
@@ -33,7 +33,7 @@ function setTime24() {
    mins = d.getMinutes();
    secs = d.getSeconds();
 
-   document.getElementById("clock").innerHTML = (hours < 10 ? "0" + hours : hours) + ":" +
+   document.getElementById('clock').innerHTML = (hours < 10 ? "0" + hours : hours) + ":" +
                                                (mins < 10 ? "0" + mins : mins) + ":" +
                                                (secs < 10 ? "0" + secs : secs);
 }
@@ -49,14 +49,14 @@ function getTime() {
 
 function swapTimeModes() {
    time12 = !time12;
-   document.getElementById("modeButton").innerHTML = (time12 ? "Switch to 24-hour mode" : "Switch to 12-hour mode")
+   document.getElementById('modeButton').innerHTML = (time12 ? "Switch to 24-hour mode" : "Switch to 12-hour mode")
 }
 
 function getLocation() {
    if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(setCoords, showLocationError);
    } else {
-      $("#errorText").html("Geolocation is not supported by this browser." + errorCoords);
+      $('#errorText').html("Geolocation is not supported by this browser." + errorCoords);
    }
 }
 
@@ -68,16 +68,16 @@ function setCoords(position) {
 function showLocationError(error) {
    switch(error.code) {
       case error.PERMISSION_DENIED:
-         $("#errorText").html("User denied the request for Geolocation." + errorCoords);
+         $('#errorText').html("User denied the request for Geolocation." + errorCoords);
          break;
       case error.POSITION_UNAVAILABLE:
-         $("#errorText").html("Location information is unavailable." + errorCoords);
+         $('#errorText').html("Location information is unavailable." + errorCoords);
          break;
       case error.TIMEOUT:
-         $("#errorText").html("The request to get user location timed out." + errorCoords);
+         $('#errorText').html("The request to get user location timed out." + errorCoords);
          break;
       case error.UNKNOWN_ERROR:
-         $("#errorText").html("An unknown error occurred." + errorCoords);
+         $('#errorText').html("An unknown error occurred." + errorCoords);
          break;
    }
 }
@@ -88,7 +88,7 @@ function getCity() {
       "&key="+googleKey;
    $.getJSON(url,
       function(data) {
-         $("#forecastLabel #location").html(data.results[0].formatted_address);
+         $('#forecastLabel #location').html(data.results[0].formatted_address);
       })
 }
 
@@ -97,8 +97,8 @@ function getTemp() {
    getCity();
    $.getJSON(url,
       function(data) {
-         $("#forecastLabel #summary").html(data.daily.summary);
-         $("#forecastIcon").attr("src", "img/" + data.daily.icon + ".png");
+         $('#forecastLabel #summary').html(data.daily.summary);
+         $('#forecastIcon').attr("src", "img/" + data.daily.icon + ".png");
 
          var temp;
          $.each(data.daily.data, function(i, v) {
@@ -120,28 +120,28 @@ function getTemp() {
             } else {
                tempClass = "hot";
             }
-            $("body").attr("class", tempClass)
+            $('body').attr("class", tempClass)
          }
       });
    setTimeout(getTemp, 30000);
 }
 
 function showAlarmPopup() {
-   $("#mask").removeClass("hide");
-   $("#popup").removeClass("hide");
+   $('#mask').removeClass("hide");
+   $('#popup').removeClass("hide");
 }
 
 function hideAlarmPopup() {
-   $("#mask").addClass("hide");
-   $("#popup").addClass("hide");
+   $('#mask').addClass("hide");
+   $('#popup').addClass("hide");
 }
 
 function insertAlarm(time, alarmName) {
-   $("<div>").addClass("flexable").append(
-      $("<div>").addClass("name").html(alarmName),
-      $("<div>").addClass("time").html(time),
+   $('<div>').addClass("flexable").append(
+      $('<div>').addClass("name").html(alarmName),
+      $('<div>').addClass("time").html(time),
       $('<input type="button" value="Delete" class="deleteAlarm">')
-   ).appendTo("#alarms");
+   ).appendTo('#alarms');
 
    $('.deleteAlarm').on('click', function() {
       $(this).parent().remove();
@@ -149,8 +149,8 @@ function insertAlarm(time, alarmName) {
 }
 
 function addAlarm() {
-   var time = $("#hours").val() + ":" + $("#mins").val() + " " + $("#ampm").val();
-   var alarmName = $("#alarmName").val();
+   var time = $('#hours').val() + ":" + $("#mins").val() + " " + $("#ampm").val();
+   var alarmName = $('#alarmName').val();
 
    var AlarmObject = Parse.Object.extend("Alarm");
    var alarmObject = new AlarmObject();
@@ -164,10 +164,10 @@ function addAlarm() {
 
 function populateAlarmOptions() {
    for (var i = 1; i <= 12; i++) {
-      $("<option>").html(i < 10 ? "0" + i : i).appendTo("#hours");
+      $('<option>').html(i < 10 ? "0" + i : i).appendTo('#hours');
    }
    for (i = 0; i < 60; i++) {
-      $("<option>").html(i < 10 ? "0" + i : i).appendTo("#mins");
+      $('<option>').html(i < 10 ? "0" + i : i).appendTo('#mins');
    }
 }
 
