@@ -54,8 +54,12 @@ function swapTimeModes() {
 
 function errorText(message) {
    $('#errorText').html(message);
+   console.log("called again");
    setTimeout(function() {
       $('#errorText').fadeOut(1000);
+      setTimeout(function() {
+         $('#errorText').html("").removeAttr("style");
+      }, 1200)
    }, 4000);
 }
 
@@ -143,6 +147,10 @@ function hideAlarmPopup() {
    $('#popup').addClass("hide");
 }
 
+function noAlarms() {
+   $('#alarms').append($('<div id="noAlarms">').html("No Alarms Set"));
+}
+
 function insertAlarm(id, time, alarmName) {
    $('#alarms').append(
       $('<div>').attr("id", id).addClass("flexable").append(
@@ -161,6 +169,9 @@ function insertAlarm(id, time, alarmName) {
                      errorText('Deleted alarm "' + $("#"+id + " .name").html() + '"');
                      b.prev().remove();
                      b.remove();
+                     if (!$('#alarms').children().length) {
+                        noAlarms();
+                     }
                   },
                   error: function() {
                      errorText("The alarm... it was too powerful... could. not. delete.");
@@ -174,7 +185,7 @@ function insertAlarm(id, time, alarmName) {
       })
    );
 
-   
+   $('#noAlarms').remove();   
 }
 
 function addAlarm() {
@@ -206,6 +217,10 @@ function getAllAlarms() {
    var query = new Parse.Query(AlarmObject);
    query.find({
       success: function(results) {
+         if (!results.length) {
+            noAlarms();
+         }
+
          for (var i = 0; i < results.length; i++) { 
             insertAlarm(results[i].id, results[i].attributes.time, results[i].attributes.alarmName);
          }
