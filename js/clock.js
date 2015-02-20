@@ -240,8 +240,8 @@ function signinCallback(authResult) {
          });
          request.execute(function(resp) {
             console.log('Retrieved profile for:' + resp.displayName);
-            getAllAlarms(username);
-            $("#saveAlarmButton").on('click', addAlarm(username));
+            getAllAlarms(resp.displayName);
+            $("#saveAlarmButton").on('click', addAlarm(resp.displayName));
          });
       });
       // Hide the sign-in button now that the user is authorized, for example:
