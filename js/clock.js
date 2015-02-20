@@ -234,8 +234,16 @@ function getAllAlarms(username) {
 function signinCallback(authResult) {
    if (authResult['status']['signed_in']) {
       // Update the app to reflect a signed in user
-      getAllAlarms(username);
-      $("#saveAlarmButton").on('click', addAlarm(username));
+      gapi.client.load('plus','v1', function() {
+         var request = gapi.client.plus.people.get({
+            'userId': 'me'
+         });
+         request.execute(function(resp) {
+            console.log('Retrieved profile for:' + resp.displayName);
+            getAllAlarms(username);
+            $("#saveAlarmButton").on('click', addAlarm(username));
+         });
+      });
       // Hide the sign-in button now that the user is authorized, for example:
       $('#signinButton').setAttribute('style', 'display: none');
    } else {
