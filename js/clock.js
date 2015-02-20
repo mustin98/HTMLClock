@@ -3,8 +3,9 @@ var forecastKey = "2adeea29b1b55d8c635071be3f293285";
 var googleKey = "AIzaSyBsPZ9QAMkfHVEcqq1bNUGLz317KQcIrAA";
 var latitude = "35.300399";
 var longitude = "-120.662362";
-var errorCoords = " Using Cal Poly Building 14 coordinates."
-
+var errorCoords = " Using Cal Poly Building 14 coordinates.";
+var clientID = "483555353678-u6kqif5pco467bgipns9gcks1ostuovb.apps.googleusercontent.com";
+var clientSecret = "kjWOb9oIe6JfH3LU-7YOrPDK";
 
 function setTime12() {
    d = new Date();
@@ -187,13 +188,15 @@ function insertAlarm(id, time, alarmName) {
    $('#noAlarms').remove();   
 }
 
-function addAlarm() {
+function addAlarm(username) {
    var time = $('#hours').val() + ":" + $("#mins").val() + " " + $("#ampm").val();
    var alarmName = $('#alarmName').val();
 
    var AlarmObject = Parse.Object.extend("Alarm");
    var alarmObject = new AlarmObject();
-      alarmObject.save({"time": time,"alarmName": alarmName}, {
+      alarmObject.save({"time": time,
+                        "alarmName": alarmName,
+                        "username": username}, {
       success: function(object) {
          insertAlarm(alarmObject.id, time, alarmName);
          hideAlarmPopup();
@@ -210,10 +213,11 @@ function populateAlarmOptions() {
    }
 }
 
-function getAllAlarms() {
+function getAllAlarms(username) {
    Parse.initialize("6gLkg0OgYP6tap2GlzSkifeVSwHYuGj9EJq5x4vz", "S1qeKZBe7jGACBf9fnhbWggIK2ZzcN1Rm0GZgZgK");
    var AlarmObject = Parse.Object.extend("Alarm");
    var query = new Parse.Query(AlarmObject);
+   query.equalTo("username", username);
    query.find({
       success: function(results) {
          if (!results.length) {
@@ -227,12 +231,29 @@ function getAllAlarms() {
    });
 }
 
+function signinCallback(authResult) {
+   if (authResult['status']['signed_in']) {
+      // Update the app to reflect a signed in user
+      getAllAlarms(username);
+      $("#saveAlarmButton").on('click', addAlarm(username));
+      // Hide the sign-in button now that the user is authorized, for example:
+      $('#signinButton').setAttribute('style', 'display: none');
+   } else {
+      $('#alarms').children().remove();
+      // Update the app to reflect a signed out user
+      // Possible error values:
+      //   "user_signed_out" - User is signed-out
+      //   "access_denied" - User denied access to your app
+      //   "immediate_failed" - Could not automatically log in the user
+      console.log('Sign-in state: ' + authResult['error']);
+  }
+}
+
 function onLoad() {
    getTime();
    getLocation();
    getTemp();
    populateAlarmOptions();
-   getAllAlarms();
 }
 
 $(document).ready(onLoad);

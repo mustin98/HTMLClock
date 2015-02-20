@@ -4,6 +4,7 @@
       <meta charset="UTF-8">
       <link rel="stylesheet" type="text/css" href="css/clock.css">
       <link rel="stylesheet" type="text/css" href="css/alarm.css">
+      <script src="https://apis.google.com/js/client:platform.js" async defer></script>
    </head>
    <body id="body">
       <div class="text">Justin's Clock</div>
@@ -25,6 +26,19 @@
          <div id="alarms"></div>
       </div>
 
+      <div id="signinContainer">
+         <span id="signinButton">
+            <span
+             class="g-signin"
+             data-callback="signinCallback"
+             data-clientid="483555353678-u6kqif5pco467bgipns9gcks1ostuovb.apps.googleusercontent.com"
+             data-cookiepolicy="single_host_origin"
+             data-requestvisibleactions="http://schema.org/AddAction"
+             data-scope="https://www.googleapis.com/auth/plus.login">
+            </span>
+         </span>
+      </div>
+
       <div id="mask" class="hide"></div>
 
       <div id="popup" class="hide">
@@ -40,7 +54,7 @@
          <input type="text" id="alarmName" placeholder="Alarm Name" />
          <div class="flexable">
             <input type="button" value="Cancel" class="button" onclick="hideAlarmPopup()" />
-            <input type="button" value="Save Alarm" class="button" onclick="addAlarm()" />
+            <input id='saveAlarmButton' type="button" value="Save Alarm" class="button" />
          </div>
       </div>
       
