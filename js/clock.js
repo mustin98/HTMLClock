@@ -243,12 +243,12 @@ function signinCallback(authResult) {
             $("#saveAlarmButton").on('click', function() {
                addAlarm(resp.id)
             });
-            console.log(resp.id);
             errorText("Signed in as: " + resp.displayName);
+            $("#alarmContainer").show();
          });
       });
       // Hide the sign-in button now that the user is authorized, for example:
-      $('#signinButton').attr('style', 'display: none');
+      $('#signinButton').hide();
    } else {
       $('#alarms').children().remove();
       // Update the app to reflect a signed out user
