@@ -220,7 +220,6 @@ function getAllAlarms(username) {
    query.equalTo("username", username);
    query.find({
       success: function(results) {
-         console.log("number of alarms: " + results.length);
          if (!results.length) {
             noAlarms();
          }
@@ -240,12 +239,13 @@ function signinCallback(authResult) {
             'userId': 'me'
          });
          request.execute(function(resp) {
-            console.log('Retrieved profile for:' + resp.displayName);
-            getAllAlarms(resp.displayName);
+            getAllAlarms(resp.id);
             $("#saveAlarmButton").on('click', function() {
-               addAlarm(resp.displayName)
+               addAlarm(resp.id)
             });
          });
+         console.log(resp.id);
+         errorText("Signed in as: " + resp.displayName);
       });
       // Hide the sign-in button now that the user is authorized, for example:
       $('#signinButton').attr('style', 'display: none');
@@ -256,7 +256,6 @@ function signinCallback(authResult) {
       //   "user_signed_out" - User is signed-out
       //   "access_denied" - User denied access to your app
       //   "immediate_failed" - Could not automatically log in the user
-      console.log('Sign-in state: ' + authResult['error']);
   }
 }
 
