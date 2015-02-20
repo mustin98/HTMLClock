@@ -220,6 +220,7 @@ function getAllAlarms(username) {
    query.equalTo("username", username);
    query.find({
       success: function(results) {
+         console.log("number of alarms: " + results.length);
          if (!results.length) {
             noAlarms();
          }
@@ -241,7 +242,9 @@ function signinCallback(authResult) {
          request.execute(function(resp) {
             console.log('Retrieved profile for:' + resp.displayName);
             getAllAlarms(resp.displayName);
-            $("#saveAlarmButton").on('click', addAlarm(resp.displayName));
+            $("#saveAlarmButton").on('click', function() {
+               addAlarm(resp.displayName)
+            });
          });
       });
       // Hide the sign-in button now that the user is authorized, for example:
