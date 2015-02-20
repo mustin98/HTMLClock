@@ -243,9 +243,9 @@ function signinCallback(authResult) {
             $("#saveAlarmButton").on('click', function() {
                addAlarm(resp.id)
             });
+            console.log(resp.id);
+            errorText("Signed in as: " + resp.displayName);
          });
-         console.log(resp.id);
-         errorText("Signed in as: " + resp.displayName);
       });
       // Hide the sign-in button now that the user is authorized, for example:
       $('#signinButton').attr('style', 'display: none');
@@ -264,6 +264,7 @@ function onLoad() {
    getLocation();
    getTemp();
    populateAlarmOptions();
+   $("#alarmContainer").hide();
 }
 
 $(document).ready(onLoad);
