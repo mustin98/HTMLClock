@@ -245,7 +245,7 @@ function signinCallback(authResult) {
          });
       });
       // Hide the sign-in button now that the user is authorized, for example:
-      $('#signinButton').setAttribute('style', 'display: none');
+      $('#signinButton').attr('style', 'display: none');
    } else {
       $('#alarms').children().remove();
       // Update the app to reflect a signed out user
