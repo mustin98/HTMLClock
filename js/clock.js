@@ -158,6 +158,8 @@ function insertAlarm(id, time, alarmName) {
          $('<div>').addClass("time").html(time)
       ),
       $('<input type="button" value="Delete" class="deleteAlarm">').on('click', function() {
+         ga('send', 'event', 'Alarm', 'Delete');
+
          var b = $(this);
          var id = b.prev().attr("id");
          var Alarm = Parse.Object.extend("Alarm");
@@ -189,6 +191,8 @@ function insertAlarm(id, time, alarmName) {
 }
 
 function addAlarm(username) {
+   ga('send', 'event', 'Alarm', 'Add');
+
    var time = $('#hours').val() + ":" + $("#mins").val() + " " + $("#ampm").val();
    var alarmName = $('#alarmName').val();
 
