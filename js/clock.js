@@ -190,7 +190,7 @@ function insertAlarm(id, time, alarmName) {
    $('#noAlarms').remove();   
 }
 
-function addAlarm(username) {
+function addAlarm() {
    ga('send', 'event', 'Alarm', 'Add');
 
    var time = $('#hours').val() + ":" + $("#mins").val() + " " + $("#ampm").val();
@@ -233,39 +233,12 @@ function getAllAlarms() {
    });
 }
 
-function signinCallback(authResult) {
-   if (authResult['status']['signed_in']) {
-      // Update the app to reflect a signed in user
-      gapi.client.load('plus','v1', function() {
-         var request = gapi.client.plus.people.get({
-            'userId': 'me'
-         });
-         request.execute(function(resp) {
-            getAllAlarms(resp.id);
-            $("#saveAlarmButton").on('click', function() {
-               addAlarm(resp.id)
-            });
-            errorText("Signed in as: " + resp.displayName);
-            $("#alarmContainer").show();
-         });
-      });
-      // Hide the sign-in button now that the user is authorized, for example:
-      $('#signinButton').hide();
-   } else {
-      $('#alarms').children().remove();
-      // Update the app to reflect a signed out user
-      // Possible error values:
-      //   "user_signed_out" - User is signed-out
-      //   "access_denied" - User denied access to your app
-      //   "immediate_failed" - Could not automatically log in the user
-  }
-}
-
 function onLoad() {
    getTime();
    getLocation();
    getTemp();
    populateAlarmOptions();
+   getAllAlarms();
 }
 
 $(document).ready(onLoad);
