@@ -195,8 +195,7 @@ function addAlarm(username) {
    var AlarmObject = Parse.Object.extend("Alarm");
    var alarmObject = new AlarmObject();
       alarmObject.save({"time": time,
-                        "alarmName": alarmName,
-                        "username": username}, {
+                        "alarmName": alarmName}, {
       success: function(object) {
          insertAlarm(alarmObject.id, time, alarmName);
          hideAlarmPopup();
@@ -213,11 +212,10 @@ function populateAlarmOptions() {
    }
 }
 
-function getAllAlarms(username) {
+function getAllAlarms() {
    Parse.initialize("6gLkg0OgYP6tap2GlzSkifeVSwHYuGj9EJq5x4vz", "S1qeKZBe7jGACBf9fnhbWggIK2ZzcN1Rm0GZgZgK");
    var AlarmObject = Parse.Object.extend("Alarm");
    var query = new Parse.Query(AlarmObject);
-   query.equalTo("username", username);
    query.find({
       success: function(results) {
          if (!results.length) {
@@ -264,7 +262,6 @@ function onLoad() {
    getLocation();
    getTemp();
    populateAlarmOptions();
-   $("#alarmContainer").hide();
 }
 
 $(document).ready(onLoad);
